@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Algorithm Animations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0d2ff;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .algo-list {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .algo-list h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4dccff;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(77, 204, 255, 0.3);
+        }
+        
+        .algo-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .algo-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 14px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .algo-btn:hover {
+            background: rgba(77, 204, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .algo-btn.active {
+            background: linear-gradient(90deg, #00b4db, #0083b0);
+            border-color: #00b4db;
+            box-shadow: 0 0 15px rgba(0, 180, 219, 0.5);
+        }
+        
+        .algo-btn .algo-number {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .visualization-container {
+            flex: 2;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .algo-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #4dccff;
+        }
+        
+        .algo-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #d1e7ff;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .animation-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .animation-area h3 {
+            color: #ffcc4d;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .array-container, .tree-container, .graph-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .array-element {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .array-element.highlighted {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(245, 87, 108, 0.7);
+        }
+        
+        .array-element.current {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.7);
+        }
+        
+        .array-element.found {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(67, 233, 123, 0.7);
+        }
+        
+        .tree-node {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+            margin: 20px;
+        }
+        
+        .tree-connections {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: linear-gradient(90deg, #00b4db, #0083b0);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 180, 219, 0.4);
+        }
+        
+        .control-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .step-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid #4dccff;
+        }
+        
+        .step-info h4 {
+            color: #4dccff;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .step-info p {
+            line-height: 1.6;
+            color: #d1e7ff;
+        }
+        
+        .complexity-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .complexity-item {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .complexity-item h5 {
+            color: #ffcc4d;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .complexity-item p {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #a0d2ff;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0d2ff;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .algo-list, .visualization-container {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .algo-title {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Algorithm Animations</h1>
+            <p class="subtitle">Visualize and understand 25 essential algorithms through interactive animations. Click on any algorithm to see it in action with step-by-step visualization.</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="algo-list">
+                <h2>25 Essential Algorithms</h2>
+                <div class="algo-buttons" id="algoButtons">
+                    <!-- Algorithm buttons will be generated here -->
+                </div>
+            </div>
+            
+            <div class="visualization-container">
+                <h2 class="algo-title" id="algoTitle">Binary Search</h2>
+                <p class="algo-description" id="algoDescription">Searches for an element in a sorted array by repeatedly dividing the search interval in half.</p>
+                
+                <div class="animation-area" id="animationArea">
+                    <h3>Visualization</h3>
+                    <div class="array-container" id="arrayContainer">
+                        <!-- Array elements will be generated here -->
+                    </div>
+                    <div class="tree-container" id="treeContainer" style="display: none;">
+                        <!-- Tree visualization will be generated here -->
+                    </div>
+                    <div class="graph-container" id="graphContainer" style="display: none;">
+                        <!-- Graph visualization will be generated here -->
+                    </div>
+                    <div id="customAnimation">
+                        <!-- Custom animation content will be generated here -->
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="control-btn" id="prevStep">
+                        <span>◀ Previous Step</span>
+                    </button>
+                    <button class="control-btn" id="restartBtn">
+                        <span>↻ Restart</span>
+                    </button>
+                    <button class="control-btn" id="nextStep">
+                        <span>Next Step ▶</span>
+                    </button>
+                    <button class="control-btn" id="autoPlayBtn">
+                        <span>▶ Auto Play</span>
+                    </button>
+                </div>
+                
+                <div class="step-info" id="stepInfo">
+                    <h4>How it works</h4>
+                    <p id="stepText">Binary search works by repeatedly dividing the search interval in half. Begin with an interval covering the whole array. If the value of the search key is less than the item in the middle of the interval, narrow the interval to the lower half. Otherwise, narrow it to the upper half. Repeatedly check until the value is found or the interval is empty.</p>
+                </div>
+                
+                <div class="complexity-info">
+                    <div class="complexity-item">
+                        <h5>Time Complexity</h5>
+                        <p id="timeComplexity">O(log n)</p>
+                    </div>
+                    <div class="complexity-item">
+                        <h5>Space Complexity</h5>
+                        <p id="spaceComplexity">O(1)</p>
+                    </div>
+                    <div class="complexity-item">
+                        <h5>Best Case</h5>
+                        <p id="bestCase">O(1)</p>
+                    </div>
+                    <div class="complexity-item">
+                        <h5>Worst Case</h5>
+                        <p id="worstCase">O(log n)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Interactive Algorithm Animations | 25 Algorithms Every Programmer Should Know | Created with HTML, CSS & JavaScript</p>
+        </footer>
+    </div>
+
+    <script>
+        // Algorithm data
+        const algorithms = [
+            {
+                id: 1,
+                name: "Binary Search",
+                description: "Searches for an element in a sorted array by repeatedly dividing the search interval in half.",
+                timeComplexity: "O(log n)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(1)",
+                worstCase: "O(log n)",
+                type: "array",
+                steps: [
+                    "Initialize left and right pointers to the start and end of the array.",
+                    "Calculate the middle index: mid = floor((left + right) / 2).",
+                    "If the middle element is the target, return the index.",
+                    "If the target is less than the middle element, set right = mid - 1.",
+                    "If the target is greater than the middle element, set left = mid + 1.",
+                    "Repeat until the target is found or left > right."
+                ]
+            },
+            {
+                id: 2,
+                name: "Bubble Sort",
+                description: "Repeatedly compares adjacent elements and swaps them if they're in the wrong order, pushing the largest element to the end in each pass.",
+                timeComplexity: "O(n²)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(n)",
+                worstCase: "O(n²)",
+                type: "array",
+                steps: [
+                    "Start from the first element and compare it with the next element.",
+                    "If the first element is greater than the second, swap them.",
+                    "Move to the next pair and repeat the comparison.",
+                    "Continue until the end of the array. This completes one pass.",
+                    "Repeat the process for n-1 passes or until no swaps are needed.",
+                    "After each pass, the largest unsorted element bubbles to the end."
+                ]
+            },
+            {
+                id: 3,
+                name: "Merge Sort",
+                description: "Divides array into halves, recursively sorts each half, then merges the sorted halves back together.",
+                timeComplexity: "O(n log n)",
+                spaceComplexity: "O(n)",
+                bestCase: "O(n log n)",
+                worstCase: "O(n log n)",
+                type: "array",
+                steps: [
+                    "If the array has only one element, it is already sorted.",
+                    "Divide the array into two halves.",
+                    "Recursively sort the left half.",
+                    "Recursively sort the right half.",
+                    "Merge the two sorted halves into a single sorted array.",
+                    "The merging process compares elements from both halves and places them in order."
+                ]
+            },
+            {
+                id: 4,
+                name: "Quick Sort",
+                description: "Picks a pivot element, partitions array so elements smaller than pivot are on left and larger on right, then recursively sorts both partitions.",
+                timeComplexity: "O(n log n)",
+                spaceComplexity: "O(log n)",
+                bestCase: "O(n log n)",
+                worstCase: "O(n²)",
+                type: "array",
+                steps: [
+                    "Select a pivot element from the array.",
+                    "Partition the array: elements smaller than pivot go left, larger go right.",
+                    "Recursively apply quick sort to the left partition.",
+                    "Recursively apply quick sort to the right partition.",
+                    "Combine the sorted left partition, pivot, and sorted right partition.",
+                    "The pivot is now in its correct sorted position."
+                ]
+            },
+            {
+                id: 5,
+                name: "Depth-First Search (DFS)",
+                description: "Explores a graph/tree by going as deep as possible down each branch before backtracking.",
+                timeComplexity: "O(V + E)",
+                spaceComplexity: "O(V)",
+                bestCase: "O(V)",
+                worstCase: "O(V + E)",
+                type: "tree",
+                steps: [
+                    "Start at the root node (or any arbitrary node).",
+                    "Mark the node as visited.",
+                    "Explore each adjacent node that hasn't been visited.",
+                    "Recursively apply DFS to each unvisited adjacent node.",
+                    "Backtrack when you reach a node with no unvisited adjacent nodes.",
+                    "Continue until all nodes are visited."
+                ]
+            },
+            {
+                id: 6,
+                name: "Breadth-First Search (BFS)",
+                description: "Explores a graph/tree level by level, visiting all neighbors before moving to the next level.",
+                timeComplexity: "O(V + E)",
+                spaceComplexity: "O(V)",
+                bestCase: "O(V)",
+                worstCase: "O(V + E)",
+                type: "tree",
+                steps: [
+                    "Start at the root node and mark it as visited.",
+                    "Add the root node to a queue.",
+                    "While the queue is not empty, remove the first node from the queue.",
+                    "Visit all adjacent nodes of the removed node.",
+                    "Mark each adjacent node as visited and add it to the queue.",
+                    "Continue until the queue is empty."
+                ]
+            },
+            {
+                id: 7,
+                name: "Dijkstra's Algorithm",
+                description: "Finds the shortest path from a starting node to all other nodes in a weighted graph by always exploring the closest unvisited node.",
+                timeComplexity: "O(V²)",
+                spaceComplexity: "O(V)",
+                bestCase: "O(V log V)",
+                worstCase: "O(V²)",
+                type: "graph",
+                steps: [
+                    "Assign a tentative distance value to every node: 0 for the start node, infinity for others.",
+                    "Set the start node as current. Mark all nodes unvisited.",
+                    "For the current node, consider all its unvisited neighbors.",
+                    "Calculate their tentative distances through the current node.",
+                    "If this distance is less than the previously recorded distance, update it.",
+                    "Mark the current node as visited. Select the unvisited node with the smallest tentative distance as the new current node.",
+                    "Repeat until all nodes are visited or the destination node is visited."
+                ]
+            },
+            {
+                id: 8,
+                name: "Dynamic Programming",
+                description: "Solves complex problems by breaking them into smaller subproblems, storing results to avoid recalculation.",
+                timeComplexity: "Varies",
+                spaceComplexity: "Varies",
+                bestCase: "Varies",
+                worstCase: "Varies",
+                type: "custom",
+                steps: [
+                    "Identify if the problem can be broken down into overlapping subproblems.",
+                    "Define the structure of the optimal solution (state definition).",
+                    "Formulate a recurrence relation for the optimal solution.",
+                    "Implement memoization (top-down) or tabulation (bottom-up) to store subproblem results.",
+                    "Use stored results to avoid redundant calculations.",
+                    "Construct the final solution from the computed subproblems."
+                ]
+            },
+            {
+                id: 9,
+                name: "Greedy Algorithm",
+                description: "Makes the locally optimal choice at each step, hoping to find a global optimum.",
+                timeComplexity: "Varies",
+                spaceComplexity: "Varies",
+                bestCase: "Varies",
+                worstCase: "Varies",
+                type: "custom",
+                steps: [
+                    "Identify the problem as one that can be solved with a greedy approach.",
+                    "Determine the selection procedure (how to choose the next best option).",
+                    "Prove that the greedy choice leads to a globally optimal solution.",
+                    "Make the greedy choice at each step.",
+                    "Reduce the problem size after each choice.",
+                    "Continue until the problem is solved."
+                ]
+            },
+            {
+                id: 10,
+                name: "Hashing",
+                description: "Uses a hash function to convert keys into array indices for fast data storage and retrieval.",
+                timeComplexity: "O(1) average",
+                spaceComplexity: "O(n)",
+                bestCase: "O(1)",
+                worstCase: "O(n)",
+                type: "custom",
+                steps: [
+                    "Define a hash function that converts keys into array indices.",
+                    "Handle collisions using techniques like chaining or open addressing.",
+                    "Insert: Compute hash, store key-value pair at that index (handle collisions).",
+                    "Search: Compute hash, look at that index, handle collisions if any.",
+                    "Delete: Compute hash, remove key-value pair from that index.",
+                    "A good hash function distributes keys uniformly across the hash table."
+                ]
+            },
+            {
+                id: 11,
+                name: "Insertion Sort",
+                description: "Builds sorted array one element at a time by inserting each element into its correct position.",
+                timeComplexity: "O(n²)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(n)",
+                worstCase: "O(n²)",
+                type: "array",
+                steps: [
+                    "Start with the second element (first element is trivially sorted).",
+                    "Compare the current element with the elements in the sorted portion.",
+                    "Shift all elements in the sorted portion that are greater than the current element one position to the right.",
+                    "Insert the current element into its correct position in the sorted portion.",
+                    "Move to the next element and repeat the process.",
+                    "Continue until the entire array is sorted."
+                ]
+            },
+            {
+                id: 12,
+                name: "Selection Sort",
+                description: "Finds the minimum element from unsorted portion and places it at the beginning, repeat for remaining array.",
+                timeComplexity: "O(n²)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(n²)",
+                worstCase: "O(n²)",
+                type: "array",
+                steps: [
+                    "Find the minimum element in the unsorted portion of the array.",
+                    "Swap it with the first element of the unsorted portion.",
+                    "The sorted portion now has one more element.",
+                    "Repeat the process for the remaining unsorted portion.",
+                    "Continue until the entire array is sorted.",
+                    "Each iteration places one element in its correct position."
+                ]
+            },
+            {
+                id: 13,
+                name: "Counting Sort",
+                description: "Counts occurrences of each value, then uses counts to place elements in correct position.",
+                timeComplexity: "O(n + k)",
+                spaceComplexity: "O(k)",
+                bestCase: "O(n + k)",
+                worstCase: "O(n + k)",
+                type: "array",
+                steps: [
+                    "Find the maximum element in the array to determine the range.",
+                    "Create a count array of size max+1, initialized to 0.",
+                    "Count the occurrences of each element in the input array.",
+                    "Modify the count array to store cumulative counts.",
+                    "Build the output array using the count array to place elements in correct positions.",
+                    "Copy the output array back to the original array."
+                ]
+            },
+            {
+                id: 14,
+                name: "Heap Sort",
+                description: "Builds a max heap from array, repeatedly extracts maximum element and places at end.",
+                timeComplexity: "O(n log n)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(n log n)",
+                worstCase: "O(n log n)",
+                type: "array",
+                steps: [
+                    "Build a max heap from the input array.",
+                    "The largest element is at the root of the heap.",
+                    "Swap the root (maximum) with the last element of the heap.",
+                    "Reduce the heap size by 1, heapify the root.",
+                    "Repeat the process until the heap size is 1.",
+                    "The array is now sorted in ascending order."
+                ]
+            },
+            {
+                id: 15,
+                name: "Binary Tree Traversal",
+                description: "Three ways to visit all nodes in a binary tree: inorder, preorder, and postorder.",
+                timeComplexity: "O(n)",
+                spaceComplexity: "O(h)",
+                bestCase: "O(n)",
+                worstCase: "O(n)",
+                type: "tree",
+                steps: [
+                    "Inorder: Left subtree, then root, then right subtree.",
+                    "Preorder: Root, then left subtree, then right subtree.",
+                    "Postorder: Left subtree, then right subtree, then root.",
+                    "For each traversal, recursively apply the same order.",
+                    "Stack can be used for iterative implementations.",
+                    "Each node is visited exactly once in any traversal."
+                ]
+            },
+            {
+                id: 16,
+                name: "Recursion",
+                description: "Function calls itself with smaller input until reaching a base case.",
+                timeComplexity: "Varies",
+                spaceComplexity: "O(n)",
+                bestCase: "Varies",
+                worstCase: "Varies",
+                type: "custom",
+                steps: [
+                    "Define a base case that stops the recursion.",
+                    "Define a recursive case that calls the function with a smaller input.",
+                    "Ensure each recursive call progresses toward the base case.",
+                    "The function call stack stores information for each recursive call.",
+                    "When base case is reached, return values propagate back up the call stack.",
+                    "Recursion is elegant but can be memory intensive due to call stack."
+                ]
+            },
+            {
+                id: 17,
+                name: "Backtracking",
+                description: "Tries different solutions, abandons a path when it determines it won't lead to a solution.",
+                timeComplexity: "Varies",
+                spaceComplexity: "O(n)",
+                bestCase: "Varies",
+                worstCase: "Exponential",
+                type: "custom",
+                steps: [
+                    "Define the problem as a search for a solution among possibilities.",
+                    "Build a solution incrementally, one piece at a time.",
+                    "If adding a piece doesn't violate constraints, add it and continue.",
+                    "If adding a piece violates constraints, backtrack (remove it).",
+                    "Try the next possible piece at that step.",
+                    "Continue until a solution is found or all possibilities are exhausted."
+                ]
+            },
+            {
+                id: 18,
+                name: "Divide and Conquer",
+                description: "Breaks problem into smaller subproblems, solves them independently, combines results.",
+                timeComplexity: "Varies",
+                spaceComplexity: "Varies",
+                bestCase: "Varies",
+                worstCase: "Varies",
+                type: "custom",
+                steps: [
+                    "Divide the problem into smaller, independent subproblems.",
+                    "Conquer by solving each subproblem recursively.",
+                    "Combine the solutions of subproblems to form the solution to the original problem.",
+                    "Base case handles the smallest subproblems directly.",
+                    "Common examples: Merge Sort, Quick Sort, Binary Search.",
+                    "Efficiency depends on how well the problem can be divided."
+                ]
+            },
+            {
+                id: 19,
+                name: "String Pattern Matching (KMP)",
+                description: "Searches for pattern in text efficiently by using information from previous matches to skip unnecessary comparisons.",
+                timeComplexity: "O(n + m)",
+                spaceComplexity: "O(m)",
+                bestCase: "O(n + m)",
+                worstCase: "O(n + m)",
+                type: "custom",
+                steps: [
+                    "Preprocess the pattern to create a longest prefix suffix (LPS) array.",
+                    "LPS array helps determine how many characters to skip when a mismatch occurs.",
+                    "Compare pattern with text from left to right.",
+                    "When a mismatch occurs, use LPS array to skip unnecessary comparisons.",
+                    "Continue until pattern is found or end of text is reached.",
+                    "More efficient than naive pattern matching which is O(n*m)."
+                ]
+            },
+            {
+                id: 20,
+                name: "Graph Cycle Detection",
+                description: "Uses DFS to detect if visiting a node that's already in current path means there's a cycle.",
+                timeComplexity: "O(V + E)",
+                spaceComplexity: "O(V)",
+                bestCase: "O(V)",
+                worstCase: "O(V + E)",
+                type: "graph",
+                steps: [
+                    "Perform DFS traversal of the graph.",
+                    "Maintain a recursion stack or visited set for the current path.",
+                    "When visiting a node, mark it as visited and add to the current path.",
+                    "For each adjacent node, if it's already in the current path, a cycle exists.",
+                    "If an adjacent node hasn't been visited, recursively visit it.",
+                    "When leaving a node, remove it from the current path."
+                ]
+            },
+            {
+                id: 21,
+                name: "Topological Sort",
+                description: "Orders vertices in directed graph so for every edge u→v, u comes before v in ordering.",
+                timeComplexity: "O(V + E)",
+                spaceComplexity: "O(V)",
+                bestCase: "O(V + E)",
+                worstCase: "O(V + E)",
+                type: "graph",
+                steps: [
+                    "Compute in-degree (number of incoming edges) for each vertex.",
+                    "Add all vertices with in-degree 0 to a queue.",
+                    "While queue is not empty, remove a vertex and add it to topological order.",
+                    "For each adjacent vertex, decrease its in-degree by 1.",
+                    "If an adjacent vertex's in-degree becomes 0, add it to the queue.",
+                    "Continue until queue is empty. If result contains all vertices, graph is acyclic."
+                ]
+            },
+            {
+                id: 22,
+                name: "Bit Manipulation",
+                description: "Performs operations directly on binary representation of numbers.",
+                timeComplexity: "O(1)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(1)",
+                worstCase: "O(1)",
+                type: "custom",
+                steps: [
+                    "AND (&): Sets each bit to 1 if both bits are 1.",
+                    "OR (|): Sets each bit to 1 if one of two bits is 1.",
+                    "XOR (^): Sets each bit to 1 if only one of two bits is 1.",
+                    "NOT (~): Inverts all bits.",
+                    "Left shift (<<): Shifts bits left, filling with 0s.",
+                    "Right shift (>>): Shifts bits right, filling based on sign bit.",
+                    "Useful for efficient computations and space optimization."
+                ]
+            },
+            {
+                id: 23,
+                name: "Kadane's Algorithm",
+                description: "Finds maximum sum of contiguous subarray by tracking current and maximum sum.",
+                timeComplexity: "O(n)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(n)",
+                worstCase: "O(n)",
+                type: "array",
+                steps: [
+                    "Initialize current sum and max sum to first element.",
+                    "Iterate through the array starting from the second element.",
+                    "For each element, update current sum: max(element, current sum + element).",
+                    "Update max sum: max(max sum, current sum).",
+                    "If current sum becomes negative, reset it to 0 (for finding non-empty subarrays).",
+                    "Continue until end of array. Max sum holds the result."
+                ]
+            },
+            {
+                id: 24,
+                name: "Two Pointer Technique",
+                description: "Uses two pointers moving through data structure to solve problems efficiently.",
+                timeComplexity: "O(n)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(n)",
+                worstCase: "O(n)",
+                type: "array",
+                steps: [
+                    "Initialize two pointers: typically one at start, one at end or both at start.",
+                    "Move pointers based on certain conditions.",
+                    "Common patterns: opposite-direction pointers for sorted arrays, same-direction pointers for sliding window.",
+                    "Process continues until pointers meet or cross.",
+                    "Efficient for problems like pair sum, removing duplicates, palindrome checking.",
+                    "Reduces time complexity from O(n²) to O(n) for many problems."
+                ]
+            },
+            {
+                id: 25,
+                name: "Sliding Window",
+                description: "Maintains a window of elements and slides it through the array to solve problems.",
+                timeComplexity: "O(n)",
+                spaceComplexity: "O(1)",
+                bestCase: "O(n)",
+                worstCase: "O(n)",
+                type: "array",
+                steps: [
+                    "Initialize window start and end pointers at 0.",
+                    "Expand the window by moving the end pointer.",
+                    "When window meets condition (size, sum, etc.), process it.",
+                    "If window violates condition, shrink it by moving start pointer.",
+                    "Continue until end pointer reaches end of array.",
+                    "Useful for problems like maximum sum subarray of size k, longest substring without repeating characters."
+                ]
+            }
+        ];
+        
+             // DOM elements
+        const algoButtonsContainer = document.getElementById('algoButtons');
+        const algoTitle = document.getElementById('algoTitle');
+        const algoDescription = document.getElementById('algoDescription');
+        const animationArea = document.getElementById('animationArea');
+        const arrayContainer = document.getElementById('arrayContainer');
+        const treeContainer = document.getElementById('treeContainer');
+        const graphContainer = document.getElementById('graphContainer');
+        const customAnimation = document.getElementById('customAnimation');
+        const stepInfo = document.getElementById('stepInfo');
+        const stepText = document.getElementById('stepText');
+        const timeComplexity = document.getElementById('timeComplexity');
+        const spaceComplexity = document.getElementById('spaceComplexity');
+        const bestCase = document.getElementById('bestCase');
+        const worstCase = document.getElementById('worstCase');
+        const prevStepBtn = document.getElementById('prevStep');
+        const nextStepBtn = document.getElementById('nextStep');
+        const restartBtn = document.getElementById('restartBtn');
+        const autoPlayBtn = document.getElementById('autoPlayBtn');
+
+        // Current algorithm state
+        let currentAlgorithm = 0;
+        let currentStep = 0;
+        let autoPlayInterval = null;
+        let animationState = {};
+
+        // Initialize algorithm buttons
+        function initAlgorithmButtons() {
+            algorithms.forEach((algo, index) => {
+                const button = document.createElement('button');
+                button.className = `algo-btn ${index === 0 ? 'active' : ''}`;
+                button.innerHTML = `<span class="algo-number">${algo.id}</span> ${algo.name}`;
+                button.addEventListener('click', () => switchAlgorithm(index));
+                algoButtonsContainer.appendChild(button);
+            });
+        }
+
+        // Switch to a different algorithm
+        function switchAlgorithm(index) {
+            // Update active button
+            document.querySelectorAll('.algo-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            // Update current algorithm
+            currentAlgorithm = index;
+            currentStep = 0;
+            
+            // Clear any running autoplay
+            stopAutoPlay();
+            
+            // Update algorithm info
+            const algo = algorithms[index];
+            algoTitle.textContent = `${algo.id}. ${algo.name}`;
+            algoDescription.textContent = algo.description;
+            timeComplexity.textContent = algo.timeComplexity;
+            spaceComplexity.textContent = algo.spaceComplexity;
+            bestCase.textContent = algo.bestCase;
+            worstCase.textContent = algo.worstCase;
+            
+            // Reset step info
+            stepText.textContent = algo.steps[0] || "Click 'Next Step' to start visualization.";
+            
+            // Clear animation containers
+            arrayContainer.innerHTML = '';
+            treeContainer.innerHTML = '';
+            graphContainer.innerHTML = '';
+            customAnimation.innerHTML = '';
+            
+            // Show/hide appropriate container
+            arrayContainer.style.display = 'none';
+            treeContainer.style.display = 'none';
+            graphContainer.style.display = 'none';
+            customAnimation.style.display = 'none';
+            
+            // Initialize animation based on algorithm type
+            switch(algo.type) {
+                case 'array':
+                    arrayContainer.style.display = 'flex';
+                    initArrayAnimation(algo);
+                    break;
+                case 'tree':
+                    treeContainer.style.display = 'flex';
+                    initTreeAnimation(algo);
+                    break;
+                case 'graph':
+                    graphContainer.style.display = 'flex';
+                    initGraphAnimation(algo);
+                    break;
+                case 'custom':
+                    customAnimation.style.display = 'block';
+                    initCustomAnimation(algo);
+                    break;
+            }
+            
+            // Update step navigation buttons
+            updateStepButtons();
+        }
+
+        // Initialize array visualization
+        function initArrayAnimation(algo) {
+            // Create sample array based on algorithm
+            let array = [];
+            
+            switch(algo.id) {
+                case 1: // Binary Search
+                    array = [2, 5, 8, 12, 16, 23, 38, 45, 56, 67, 78];
+                    animationState = {
+                        array: [...array],
+                        target: 23,
+                        left: 0,
+                        right: array.length - 1,
+                        mid: Math.floor((array.length - 1) / 2),
+                        found: false
+                    };
+                    break;
+                case 2: // Bubble Sort
+                    array = [5, 1, 4, 2, 8];
+                    animationState = {
+                        array: [...array],
+                        i: 0,
+                        j: 0,
+                        swapped: false,
+                        sorted: false
+                    };
+                    break;
+                case 3: // Merge Sort
+                    array = [38, 27, 43, 3];
+                    animationState = {
+                        array: [...array],
+                        steps: [],
+                        currentStep: 0
+                    };
+                    break;
+                case 4: // Quick Sort
+                    array = [10, 7, 8, 9, 1, 5];
+                    animationState = {
+                        array: [...array],
+                        low: 0,
+                        high: array.length - 1,
+                        pivot: 5,
+                        partitioning: false
+                    };
+                    break;
+                case 11: // Insertion Sort
+                    array = [5, 2, 4, 6, 1];
+                    animationState = {
+                        array: [...array],
+                        i: 1,
+                        key: array[1],
+                        j: 0,
+                        sorted: false
+                    };
+                    break;
+                case 12: // Selection Sort
+                    array = [64, 25, 12, 22, 11];
+                    animationState = {
+                        array: [...array],
+                        i: 0,
+                        minIndex: 0,
+                        j: 1,
+                        sorted: false
+                    };
+                    break;
+                case 13: // Counting Sort
+                    array = [4, 2, 2, 8, 3, 3, 1];
+                    animationState = {
+                        array: [...array],
+                        count: new Array(9).fill(0),
+                        output: [],
+                        step: 0
+                    };
+                    break;
+                case 14: // Heap Sort
+                    array = [4, 10, 3, 5, 1];
+                    animationState = {
+                        array: [...array],
+                        heapSize: array.length,
+                        step: 0
+                    };
+                    break;
+                case 23: // Kadane's Algorithm
+                    array = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
+                    animationState = {
+                        array: [...array],
+                        currentSum: array[0],
+                        maxSum: array[0],
+                        currentStart: 0,
+                        maxStart: 0,
+                        maxEnd: 0,
+                        i: 1
+                    };
+                    break;
+                case 24: // Two Pointer
+                    array = [1, 2, 3, 4, 6, 8];
+                    animationState = {
+                        array: [...array],
+                        target: 10,
+                        left: 0,
+                        right: array.length - 1,
+                        found: false
+                    };
+                    break;
+                case 25: // Sliding Window
+                    array = [2, 1, 5, 1, 3, 2];
+                    animationState = {
+                        array: [...array],
+                        k: 3,
+                        windowStart: 0,
+                        windowEnd: 2,
+                        maxSum: 0,
+                        currentSum: 0,
+                        step: 0
+                    };
+                    break;
+                default:
+                    array = [3, 7, 2, 9, 1, 5];
+                    animationState = {
+                        array: [...array],
+                        step: 0
+                    };
+            }
+            
+            // Render array elements
+            array.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = value;
+                element.id = `array-element-${index}`;
+                arrayContainer.appendChild(element);
+            });
+        }
+
+        // Initialize tree visualization
+        function initTreeAnimation(algo) {
+            // Create a simple binary tree structure
+            const treeData = {
+                value: 1,
+                left: {
+                    value: 2,
+                    left: { value: 4 },
+                    right: { value: 5 }
+                },
+                right: {
+                    value: 3
+                }
+            };
+            
+            animationState = {
+                tree: treeData,
+                visited: [],
+                queue: [],
+                current: null,
+                step: 0
+            };
+            
+            // Render tree visualization
+            renderTree(treeData);
+        }
+
+        // Render tree
+        function renderTree(node, parentElement = treeContainer, isLeft = null) {
+            if (!node) return;
+            
+            const nodeElement = document.createElement('div');
+            nodeElement.className = 'tree-node';
+            nodeElement.textContent = node.value;
+            nodeElement.id = `tree-node-${node.value}`;
+            
+            parentElement.appendChild(nodeElement);
+            
+            // For simplicity, we're not drawing connections in this basic version
+            // In a full implementation, we would use SVG or canvas to draw lines
+        }
+
+        // Initialize graph visualization
+        function initGraphAnimation(algo) {
+            // Create a simple graph
+            const graphData = {
+                nodes: [
+                    { id: 'A', x: 100, y: 100 },
+                    { id: 'B', x: 300, y: 100 },
+                    { id: 'C', x: 100, y: 300 },
+                    { id: 'D', x: 300, y: 300 }
+                ],
+                edges: [
+                    { from: 'A', to: 'B', weight: 4 },
+                    { from: 'A', to: 'C', weight: 2 },
+                    { from: 'B', to: 'D', weight: 1 },
+                    { from: 'C', to: 'D', weight: 5 }
+                ]
+            };
+            
+            animationState = {
+                graph: graphData,
+                visited: [],
+                distances: { A: 0, B: Infinity, C: Infinity, D: Infinity },
+                current: 'A',
+                step: 0
+            };
+            
+            // Render graph visualization
+            renderGraph(graphData);
+        }
+
+        // Render graph
+        function renderGraph(graph) {
+            // For simplicity, we'll create a basic representation
+            // In a full implementation, we would use SVG or canvas
+            graph.nodes.forEach(node => {
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'array-element';
+                nodeElement.textContent = node.id;
+                nodeElement.style.position = 'relative';
+                nodeElement.style.left = `${node.x/5}px`;
+                nodeElement.style.top = `${node.y/5}px`;
+                graphContainer.appendChild(nodeElement);
+            });
+        }
+
+        // Initialize custom visualization
+        function initCustomAnimation(algo) {
+            customAnimation.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: #4dccff; margin-bottom: 15px;">${algo.name} Visualization</h3>
+                    <p style="margin-bottom: 20px;">This algorithm doesn't have a specific visualization yet. The step-by-step explanation will guide you through how it works.</p>
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 15px; margin-top: 15px;">
+                        <h4 style="color: #ffcc4d; margin-bottom: 10px;">Key Concept</h4>
+                        <p>${algo.description}</p>
+                    </div>
+                </div>
+            `;
+            
+            animationState = {
+                step: 0
+            };
+        }
+
+        // Update step navigation buttons state
+        function updateStepButtons() {
+            const algo = algorithms[currentAlgorithm];
+            prevStepBtn.disabled = currentStep === 0;
+            nextStepBtn.disabled = currentStep >= algo.steps.length;
+            
+            // Update step text
+            if (currentStep < algo.steps.length) {
+                stepText.textContent = algo.steps[currentStep];
+            } else {
+                stepText.textContent = "Algorithm completed! Click 'Restart' to run it again.";
+            }
+            
+            // Update visualization based on current step
+            updateVisualization();
+        }
+
+        // Update visualization based on current step
+        function updateVisualization() {
+            const algo = algorithms[currentAlgorithm];
+            
+            // Reset all elements
+            document.querySelectorAll('.array-element').forEach(el => {
+                el.classList.remove('highlighted', 'current', 'found');
+            });
+            
+            document.querySelectorAll('.tree-node').forEach(el => {
+                el.classList.remove('visited', 'current');
+            });
+            
+            // Update based on algorithm and step
+            switch(algo.id) {
+                case 1: // Binary Search
+                    updateBinarySearchVisualization();
+                    break;
+                case 2: // Bubble Sort
+                    updateBubbleSortVisualization();
+                    break;
+                // Add more algorithm visualizations here
+                default:
+                    // Default visualization update
+                    if (arrayContainer.style.display === 'flex') {
+                        const elements = document.querySelectorAll('.array-element');
+                        if (elements.length > 0 && currentStep < elements.length) {
+                            elements[currentStep].classList.add('current');
+                        }
+                    }
+            }
+        }
+
+        // Update binary search visualization
+        function updateBinarySearchVisualization() {
+            const { left, right, mid, found, array } = animationState;
+            
+            // Highlight left, right, and mid pointers
+            const elements = document.querySelectorAll('.array-element');
+            
+            if (elements[left]) {
+                elements[left].classList.add('highlighted');
+            }
+            
+            if (elements[right]) {
+                elements[right].classList.add('highlighted');
+            }
+            
+            if (elements[mid]) {
+                elements[mid].classList.add('current');
+                
+                if (found || array[mid] === animationState.target) {
+                    elements[mid].classList.add('found');
+                }
+            }
+        }
+
+        // Update bubble sort visualization
+        function updateBubbleSortVisualization() {
+            const { i, j, array } = animationState;
+            const elements = document.querySelectorAll('.array-element');
+            
+            // Highlight current elements being compared
+            if (j < array.length - i - 1) {
+                if (elements[j]) elements[j].classList.add('current');
+                if (elements[j + 1]) elements[j + 1].classList.add('highlighted');
+            }
+        }
+
+        // Go to next step
+        function nextStep() {
+            const algo = algorithms[currentAlgorithm];
+            if (currentStep < algo.steps.length) {
+                currentStep++;
+                
+                // Update algorithm state based on step
+                updateAlgorithmState();
+                updateStepButtons();
+            }
+        }
+
+        // Go to previous step
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                
+                // Update algorithm state based on step
+                updateAlgorithmState();
+                updateStepButtons();
+            }
+        }
+
+        // Update algorithm state based on current step
+        function updateAlgorithmState() {
+            const algo = algorithms[currentAlgorithm];
+            
+            switch(algo.id) {
+                case 1: // Binary Search
+                    if (currentStep > 0 && !animationState.found) {
+                        const { left, right, target, array } = animationState;
+                        
+                        if (left <= right) {
+                            const mid = Math.floor((left + right) / 2);
+                            animationState.mid = mid;
+                            
+                            if (array[mid] === target) {
+                                animationState.found = true;
+                            } else if (array[mid] < target) {
+                                animationState.left = mid + 1;
+                            } else {
+                                animationState.right = mid - 1;
+                            }
+                        }
+                    }
+                    break;
+                case 2: // Bubble Sort
+                    if (currentStep > 0 && !animationState.sorted) {
+                        const { i, j, array } = animationState;
+                        
+                        if (j < array.length - i - 1) {
+                            // Compare and swap if needed
+                            if (array[j] > array[j + 1]) {
+                                [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                                animationState.swapped = true;
+                            }
+                            
+                            animationState.j++;
+                            
+                            // If we've completed a pass
+                            if (j >= array.length - i - 1) {
+                                animationState.i++;
+                                animationState.j = 0;
+                                
+                                // If no swaps were made, array is sorted
+                                if (!animationState.swapped) {
+                                    animationState.sorted = true;
+                                } else {
+                                    animationState.swapped = false;
+                                }
+                                
+                                // Check if sorting is complete
+                                if (i >= array.length - 1) {
+                                    animationState.sorted = true;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                // Add more algorithm state updates here
+            }
+        }
+
+        // Restart animation
+        function restartAnimation() {
+            currentStep = 0;
+            switchAlgorithm(currentAlgorithm);
+        }
+
+        // Start auto-play
+        function startAutoPlay() {
+            stopAutoPlay(); // Clear any existing interval
+            
+            autoPlayInterval = setInterval(() => {
+                const algo = algorithms[currentAlgorithm];
+                
+                if (currentStep < algo.steps.length) {
+                    nextStep();
+                } else {
+                    stopAutoPlay();
+                }
+            }, 1500);
+            
+            autoPlayBtn.innerHTML = '<span>⏸ Stop Auto Play</span>';
+        }
+
+        // Stop auto-play
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+            
+            autoPlayBtn.innerHTML = '<span>▶ Auto Play</span>';
+        }
+
+        // Toggle auto-play
+        function toggleAutoPlay() {
+            if (autoPlayInterval) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
+
+        // Initialize event listeners
+        function initEventListeners() {
+            prevStepBtn.addEventListener('click', prevStep);
+            nextStepBtn.addEventListener('click', nextStep);
+            restartBtn.addEventListener('click', restartAnimation);
+            autoPlayBtn.addEventListener('click', toggleAutoPlay);
+        }
+
+        // Initialize the application
+        function init() {
+            initAlgorithmButtons();
+            initEventListeners();
+            switchAlgorithm(0); // Start with first algorithm
+        }
+
+        // Start when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+   
